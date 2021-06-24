@@ -1,12 +1,25 @@
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import logo from "./logo.svg";
 import "./App.css";
 
+import CwNavbar from "./components/CwNavbar";
 import VaccineCenter from "./components/VaccineCenter";
 
 function App() {
   return (
     <div className="App">
-      <VaccineCenter />
+      <Router>
+        <CwNavbar />
+        <Route path="/district">
+          <VaccineCenter />
+        </Route>
+        <Route path="/pincode">
+          <h>TODO: Search vaccine centres by PIN code</h>
+        </Route>
+        <Route exact path="/">
+          <h>TODO: HOME</h>
+        </Route>
+      </Router>
     </div>
   );
 }
