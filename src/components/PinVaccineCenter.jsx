@@ -2,17 +2,9 @@ import React from "react";
 import { useState } from "react";
 import axios from "axios";
 
-import {
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  Col,
-  Table,
-  Alert,
-} from "reactstrap";
-import moment from "moment";
+import { Alert } from "reactstrap";
+import CwPinForm from "./CwPinForm";
+import CwTable from "./CwTable";
 
 const PinVaccineCenter = (props) => {
   const [pincode, setPincode] = useState(0);
@@ -39,6 +31,15 @@ const PinVaccineCenter = (props) => {
     }
     event.preventDefault();
   };
+  const handleSetPincode = (pin) => {
+    setPincode(pin);
+  };
+  const handleSetDate = (d) => {
+    setDate(d);
+  };
+  const handleSetShow = (s) => {
+    setShow(s);
+  };
   return (
     <div>
       {show ? (
@@ -61,69 +62,15 @@ const PinVaccineCenter = (props) => {
       <br />
       <br />
       <br />
-      <Form>
-        <FormGroup row>
-          <Label for="exampleEmail2" sm={2}>
-            Enter Pincode:
-          </Label>
-          <Col sm={3}>
-            <Input
-              type="text"
-              name="pincode"
-              id="pincode"
-              placeholder="enter your pincode"
-              onChange={(e) => {
-                setPincode(e.target.value);
-              }}
-            />
-          </Col>
-          <Label for="exampleDate" sm={1}>
-            Date:{" "}
-          </Label>
-          <Col sm={3}>
-            <Input
-              type="date"
-              name="date"
-              id="exampleDate"
-              placeholder="date placeholder"
-              onChange={(e) =>
-                setDate(moment(e.target.value).format("DD-MM-YYYY"))
-              }
-            />
-          </Col>
-        </FormGroup>
-      </Form>
-      <Button
-        color="info"
-        onClick={(event) => {
-          setShow(true);
-          handleSubmit(event);
-        }}
-      >
-        OK
-      </Button>{" "}
+      <CwPinForm
+        handlesetPin={handleSetPincode}
+        handlesetDate={handleSetDate}
+        handlesetShow={handleSetShow}
+        handlesubmit={handleSubmit}
+      />
       <br />
       <br />
-      <Table striped>
-        <thead>
-          <tr>
-            <th>Center ID</th>
-            <th>Name</th>
-            <th>Address</th>
-          </tr>
-        </thead>
-        <tbody>
-          {session.length
-            ? session.map((s) => (
-                <tr>
-                  <td>{s["center_id"]}</td>
-                  <td>{s["name"]}</td>
-                  <td>{s["address"]}</td>
-                </tr>
-              ))
-            : null}
-        </tbody>
-      </Table>
+      <CwTable vaccine_center={session} />
     </div>
   );
 };

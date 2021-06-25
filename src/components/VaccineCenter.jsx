@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Button, Table, Alert, Label, Col, Input, Form, Row } from "reactstrap";
+import { Button, Alert, Label, Col, Input, Form, Row } from "reactstrap";
 import moment from "moment";
+import CwTable from "./CwTable";
 
 import axios from "axios";
 // let headers = {
@@ -219,26 +220,7 @@ class VaccineCenter extends Component {
         </Button>{" "}
         <br />
         <br />
-        <Table striped>
-          <thead>
-            <tr>
-              <th>Center ID</th>
-              <th>Name</th>
-              <th>Address</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.state.posts.length
-              ? this.state.posts.map((s) => (
-                  <tr>
-                    <td>{s["center_id"]}</td>
-                    <td>{s["name"]}</td>
-                    <td>{s["address"]}</td>
-                  </tr>
-                ))
-              : null}
-          </tbody>
-        </Table>
+        <CwTable vaccine_center={this.state.posts} />
       </div>
 
       /* // <div>
