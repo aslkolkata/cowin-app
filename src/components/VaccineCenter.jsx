@@ -125,19 +125,6 @@ class VaccineCenter extends Component {
     {all_states.map(stat=> {return <DropdownItem id='state_name' key={stat.state_name} onClick={this.handleChange}>{stat.state_name}</DropdownItem>})}
 </DropdownMenu>
 </Dropdown> */}
-        <Navbar color="light" light expand="md">
-          <NavbarBrand href="/">
-            <div>
-              {this.state.state_name === "Select State"
-                ? null
-                : this.state.state_name}{" "}
-              /{" "}
-              {this.state.district === "Select District"
-                ? null
-                : this.state.district}
-            </div>
-          </NavbarBrand>
-        </Navbar>
         <br />
         <br />
         <br />
