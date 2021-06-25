@@ -1,5 +1,16 @@
 import React, { Component } from "react";
-import { Button, Table, Alert } from "reactstrap";
+import {
+  Button,
+  Table,
+  Alert,
+  Label,
+  Col,
+  Input,
+  FormGroup,
+  Form,
+  Row,
+} from "reactstrap";
+import moment from "moment";
 
 import axios from "axios";
 // let headers = {
@@ -33,6 +44,7 @@ class VaccineCenter extends Component {
       state_name: "Select State",
       dropdownOpen: false,
       show_alert: false,
+      date: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -98,7 +110,8 @@ class VaccineCenter extends Component {
         .get(
           "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=" +
             id["district_id"] +
-            "&date=15-06-2021"
+            "&date=" +
+            this.state.date
         )
         .then((resp) => {
           console.log(resp.data);
@@ -139,7 +152,8 @@ class VaccineCenter extends Component {
             ) : (
               <div>
                 State: {this.state.state_name} &nbsp;&nbsp;&nbsp;&nbsp;
-                District: {this.state.district}
+                District: {this.state.district} &nbsp;&nbsp;&nbsp;&nbsp; Date:{" "}
+                {this.state.date}
               </div>
             )}
           </Alert>
@@ -148,35 +162,61 @@ class VaccineCenter extends Component {
         <br />
         <br />
         <br />
-        <form>
-          <label for="state">Choose a State:&nbsp;</label>
-          <select
-            name="state_name"
-            id="state"
-            value={this.state.state_name}
-            onChange={this.handleChange}
-          >
-            <option value="Select State">Select State</option>
-            {all_states.map((stat) => (
-              <option value={stat.state_name}>{stat.state_name}</option>
-            ))}
-          </select>
-          <label for="district">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Choose a
-            District:&nbsp;
-          </label>
-          <select
-            name="district"
-            id="district"
-            value={this.state.district}
-            onChange={this.handleChange}
-          >
-            <option value="Select District">Select District</option>
-            {this.state.all_district.map((dis) => (
-              <option value={dis.district_name}>{dis.district_name}</option>
-            ))}
-          </select>
-        </form>
+        <Form>
+          <Row form>
+            <Label for="state" sm={1}>
+              Choose a State:
+            </Label>
+            <Col sm={4}>
+              <Input
+                type="select"
+                name="state_name"
+                id="state"
+                value={this.state.state_name}
+                onChange={this.handleChange}
+              >
+                <option value="Select State">Select State</option>
+                {all_states.map((stat) => (
+                  <option value={stat.state_name}>{stat.state_name}</option>
+                ))}
+              </Input>
+            </Col>
+            <Label for="district" sm={2}>
+              Choose a District:
+            </Label>
+            <Col sm={4}>
+              {" "}
+              <Input
+                type="select"
+                name="district"
+                id="district"
+                value={this.state.district}
+                onChange={this.handleChange}
+              >
+                <option value="Select District">Select District</option>
+                {this.state.all_district.map((dis) => (
+                  <option value={dis.district_name}>{dis.district_name}</option>
+                ))}
+              </Input>
+            </Col>
+          </Row>
+          <br />
+          <Row form>
+            <Col sm={0} md={{ size: 4, offset: 3 }}>
+              <Input
+                type="date"
+                name="date"
+                id="exampleDate"
+                placeholder="date placeholder"
+                onChange={(e) => {
+                  this.setState({
+                    date: moment(e.target.value).format("DD-MM-YYYY"),
+                  });
+                }}
+              />
+            </Col>
+          </Row>
+        </Form>
         <br />
         <Button
           color="info"
