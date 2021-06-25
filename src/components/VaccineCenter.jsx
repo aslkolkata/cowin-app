@@ -1,15 +1,5 @@
 import React, { Component } from "react";
-import {
-  Button,
-  Table,
-  Alert,
-  Label,
-  Col,
-  Input,
-  FormGroup,
-  Form,
-  Row,
-} from "reactstrap";
+import { Button, Table, Alert, Label, Col, Input, Form, Row } from "reactstrap";
 import moment from "moment";
 
 import axios from "axios";

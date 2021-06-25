@@ -1,6 +1,5 @@
-import React, { Component } from "react";
+import React from "react";
 import { useState } from "react";
-import { useEffect } from "react";
 import axios from "axios";
 
 import {
@@ -9,7 +8,6 @@ import {
   FormGroup,
   Label,
   Input,
-  FormText,
   Col,
   Table,
   Alert,
@@ -51,7 +49,7 @@ const PinVaccineCenter = (props) => {
           toggle={() => setShow(false)}
           dismissible
         >
-          {pincode == 0 ? (
+          {pincode === 0 ? (
             <div>Wrong Input...... Try Again !!</div>
           ) : (
             <div>
