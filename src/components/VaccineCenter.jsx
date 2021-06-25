@@ -1,15 +1,5 @@
 import React, { Component } from "react";
-import {
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Button,
-  Table,
-  Navbar,
-  NavbarBrand,
-  Alert,
-} from "reactstrap";
+import { Button, Table, Alert } from "reactstrap";
 
 import axios from "axios";
 // let headers = {
@@ -42,12 +32,17 @@ class VaccineCenter extends Component {
       all_states: [],
       state_name: "Select State",
       dropdownOpen: false,
+      show_alert: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.toggle = this.toggle.bind(this);
     //TODO: use arrow functions
   }
+  setShowAlert(s) {
+    this.setState({ show_alert: s });
+  }
+
   toggle(event) {
     this.setState({
       dropdownOpen: !this.state.dropdownOpen,
@@ -78,18 +73,19 @@ class VaccineCenter extends Component {
         if (stat["state_name"] === this.state.state_name) return stat;
       })[0];
       console.log(state_id);
-
-      axios
-        .get(
-          "https://cdn-api.co-vin.in/api/v2/admin/location/districts/" +
-            state_id["state_id"]
-        )
-        .then((response) => {
-          this.setState({ all_district: response.data.districts });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      if (state_id) {
+        axios
+          .get(
+            "https://cdn-api.co-vin.in/api/v2/admin/location/districts/" +
+              state_id["state_id"]
+          )
+          .then((response) => {
+            this.setState({ all_district: response.data.districts });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     }
   }
 
@@ -97,21 +93,24 @@ class VaccineCenter extends Component {
     let id = this.state.all_district.filter((x) => {
       if (x["district_name"] === this.state.district) return x;
     })[0];
-    axios
-      .get(
-        "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=" +
-          id["district_id"] +
-          "&date=15-06-2021"
-      )
-      .then((resp) => {
-        console.log(resp.data);
-        this.setState({ posts: resp.data.sessions });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    event.preventDefault();
+    if (id) {
+      axios
+        .get(
+          "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=" +
+            id["district_id"] +
+            "&date=15-06-2021"
+        )
+        .then((resp) => {
+          console.log(resp.data);
+          this.setState({ posts: resp.data.sessions });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      event.preventDefault();
+    }
   }
+
   render() {
     const { all_states } = this.state;
 
@@ -125,6 +124,26 @@ class VaccineCenter extends Component {
     {all_states.map(stat=> {return <DropdownItem id='state_name' key={stat.state_name} onClick={this.handleChange}>{stat.state_name}</DropdownItem>})}
 </DropdownMenu>
 </Dropdown> */}
+        {this.state.show_alert ? (
+          <Alert
+            color="info"
+            onClose={() => this.setShowAlert(false)}
+            isOpen={this.state.show_alert}
+            toggle={() => this.setShowAlert(false)}
+            dismissible
+          >
+            {this.state.state_name === "Select State" ? (
+              <div>Wrong Input...... Try Again !!</div>
+            ) : this.state.district === "Select District" ? (
+              <div>Wrong Input...... Try Again !!</div>
+            ) : (
+              <div>
+                State: {this.state.state_name} &nbsp;&nbsp;&nbsp;&nbsp;
+                District: {this.state.district}
+              </div>
+            )}
+          </Alert>
+        ) : null}
         <br />
         <br />
         <br />
@@ -137,6 +156,7 @@ class VaccineCenter extends Component {
             value={this.state.state_name}
             onChange={this.handleChange}
           >
+            <option value="Select State">Select State</option>
             {all_states.map((stat) => (
               <option value={stat.state_name}>{stat.state_name}</option>
             ))}
@@ -151,6 +171,7 @@ class VaccineCenter extends Component {
             value={this.state.district}
             onChange={this.handleChange}
           >
+            <option value="Select District">Select District</option>
             {this.state.all_district.map((dis) => (
               <option value={dis.district_name}>{dis.district_name}</option>
             ))}
@@ -160,7 +181,7 @@ class VaccineCenter extends Component {
         <Button
           color="info"
           onClick={(event) => {
-            alert("hello");
+            this.setShowAlert(true);
             this.handleSubmit(event);
           }}
         >
