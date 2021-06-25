@@ -4,6 +4,7 @@ import "./App.css";
 
 import CwNavbar from "./components/CwNavbar";
 import VaccineCenter from "./components/VaccineCenter";
+import PinVaccineCenter from "./components/PinVaccineCenter";
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
           <VaccineCenter />
         </Route>
         <Route path="/pincode">
-          <h>TODO: Search vaccine centres by PIN code</h>
+          <PinVaccineCenter />
         </Route>
         <Route exact path="/">
           <h>TODO: HOME</h>
