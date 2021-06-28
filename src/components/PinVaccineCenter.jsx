@@ -31,15 +31,6 @@ const PinVaccineCenter = (props) => {
     }
     event.preventDefault();
   };
-  const handleSetPincode = (pin) => {
-    setPincode(pin);
-  };
-  const handleSetDate = (d) => {
-    setDate(d);
-  };
-  const handleSetShow = (s) => {
-    setShow(s);
-  };
   return (
     <div>
       {show ? (
@@ -63,9 +54,15 @@ const PinVaccineCenter = (props) => {
       <br />
       <br />
       <CwPinForm
-        handlesetPin={handleSetPincode}
-        handlesetDate={handleSetDate}
-        handlesetShow={handleSetShow}
+        handlesetPin={(pin) => {
+          setPincode(pin);
+        }}
+        handlesetDate={(d) => {
+          setDate(d);
+        }}
+        handlesetShow={(s) => {
+          setShow(s);
+        }}
         handlesubmit={handleSubmit}
       />
       <br />
