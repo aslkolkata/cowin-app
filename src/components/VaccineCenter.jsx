@@ -40,7 +40,6 @@ class VaccineCenter extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.toggle = this.toggle.bind(this);
-    //TODO: use arrow functions
   }
   setShowAlert(s) {
     this.setState({ show_alert: s });
@@ -222,15 +221,6 @@ class VaccineCenter extends Component {
         <br />
         <CwTable vaccine_center={this.state.posts} />
       </div>
-
-      /* // <div>
-            //     List of posts
-            //     {
-                    
-            //         posts.length ?
-            //         posts.map(post => <div key={post.center_id}>center_id: {post.center_id}, name: {post.name}, address: {post.address}</div>) : null
-            //     }
-            // </div> */
     );
   }
 }

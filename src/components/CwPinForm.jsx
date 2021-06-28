@@ -39,8 +39,8 @@ const CwPinForm = (props) => {
       <Button
         color="info"
         onClick={(event) => {
-          props.handlesetShow(true);
-          props.handlesubmit(event);
+          props.setsession([]);
+          props.handleToggle();
         }}
       >
         OK
