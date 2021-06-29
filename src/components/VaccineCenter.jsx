@@ -1,27 +1,11 @@
 import React, { Component } from "react";
-import { Button, Alert, Label, Col, Input, Form, Row } from "reactstrap";
+import { Button, Label, Col, Input, Form, Row } from "reactstrap";
 import moment from "moment";
 import CwTable from "./CwTable";
+import CwModal from "./CwModal";
+import CwAlert from "./CwAlert";
 
 import axios from "axios";
-// let headers = {
-//     'Accept': 'application/json',
-//     'Content-Type': 'application/json',
-//     'Accept-Encoding': 'identity',
-//     'Content-Encoding': 'identity'
-// };
-// const client = axios.create({
-//     auth: {
-//       username: 'administrator',
-//       password: 'admin'
-//     },
-//     headers: {
-//         'Accept': 'application/json',
-//         'Content-Type': 'application/json',
-//         // 'Accept-Encoding': 'identity',
-//         // 'Content-Encoding': 'identity'
-//     }
-//   });
 
 class VaccineCenter extends Component {
   constructor(props) {
@@ -33,22 +17,19 @@ class VaccineCenter extends Component {
       district: "Select District",
       all_states: [],
       state_name: "Select State",
-      dropdownOpen: false,
       show_alert: false,
       date: "",
+      modal: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.toggle = this.toggle.bind(this);
   }
+  toggle() {
+    this.setState({ modal: !this.state.modal });
+  }
   setShowAlert(s) {
     this.setState({ show_alert: s });
-  }
-
-  toggle(event) {
-    this.setState({
-      dropdownOpen: !this.state.dropdownOpen,
-    });
   }
 
   handleChange(event) {
@@ -70,7 +51,6 @@ class VaccineCenter extends Component {
   componentDidUpdate(prevProps, prevState) {
     console.log(prevState.state_name);
     if (prevState.state_name !== this.state.state_name) {
-      console.log("abcd");
       let state_id = this.state.all_states.filter((stat) => {
         if (stat["state_name"] === this.state.state_name) return stat;
       })[0];
@@ -87,6 +67,8 @@ class VaccineCenter extends Component {
           .catch((error) => {
             console.log(error);
           });
+      } else {
+        this.setState({ all_district: [] });
       }
     }
   }
@@ -95,6 +77,7 @@ class VaccineCenter extends Component {
     let id = this.state.all_district.filter((x) => {
       if (x["district_name"] === this.state.district) return x;
     })[0];
+    console.log(id);
     if (id) {
       axios
         .get(
@@ -110,7 +93,10 @@ class VaccineCenter extends Component {
         .catch((error) => {
           console.log(error);
         });
-      event.preventDefault();
+      // event.preventDefault();
+    } else {
+      this.setState({ posts: [] });
+      this.setShowAlert(true);
     }
   }
 
@@ -119,34 +105,30 @@ class VaccineCenter extends Component {
 
     return (
       <div>
-        {/* <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
-<DropdownToggle caret>
-{this.state.state_name}
-</DropdownToggle>
-<DropdownMenu>
-    {all_states.map(stat=> {return <DropdownItem id='state_name' key={stat.state_name} onClick={this.handleChange}>{stat.state_name}</DropdownItem>})}
-</DropdownMenu>
-</Dropdown> */}
-        {this.state.show_alert ? (
-          <Alert
-            color="info"
-            onClose={() => this.setShowAlert(false)}
-            isOpen={this.state.show_alert}
-            toggle={() => this.setShowAlert(false)}
-            dismissible
-          >
-            {this.state.state_name === "Select State" ? (
-              <div>Wrong Input...... Try Again !!</div>
-            ) : this.state.district === "Select District" ? (
-              <div>Wrong Input...... Try Again !!</div>
-            ) : (
+        <div>
+          <CwModal
+            modal_state={this.state.modal}
+            do_toggle={this.toggle}
+            handlesubmit={this.handleSubmit}
+            message={
               <div>
-                State: {this.state.state_name} &nbsp;&nbsp;&nbsp;&nbsp;
-                District: {this.state.district} &nbsp;&nbsp;&nbsp;&nbsp; Date:{" "}
-                {this.state.date}
+                State: {this.state.state_name}
+                <br />
+                District: {this.state.district}
+                <br />
+                Date: {this.state.date}
               </div>
-            )}
-          </Alert>
+            }
+          />
+        </div>
+        {this.state.show_alert ? (
+          <CwAlert
+            setshow={(show) => {
+              this.setShowAlert(show);
+            }}
+            message={<div>Wrong Inputs...... Try Again !!</div>}
+            s={this.state.show_alert}
+          />
         ) : null}
         <br />
         <br />
@@ -211,8 +193,8 @@ class VaccineCenter extends Component {
         <Button
           color="info"
           onClick={(event) => {
-            this.setShowAlert(true);
-            this.handleSubmit(event);
+            this.setState({ posts: [] });
+            this.toggle();
           }}
         >
           OK

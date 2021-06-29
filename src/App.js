@@ -4,6 +4,7 @@ import "./App.css";
 import CwNavbar from "./components/CwNavbar";
 import VaccineCenter from "./components/VaccineCenter";
 import PinVaccineCenter from "./components/PinVaccineCenter";
+import CwHome from "./components/CwHome";
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
           <PinVaccineCenter />
         </Route>
         <Route exact path="/">
-          <h>TODO: HOME</h>
+          <CwHome />
         </Route>
       </Router>
     </div>
