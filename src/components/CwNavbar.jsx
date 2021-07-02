@@ -32,6 +32,9 @@ const CwNavbar = (props) => {
             <NavItem>
               <NavLink href="/pincode">PIN Code</NavLink>
             </NavItem>
+            <NavItem>
+              <NavLink href="/vaccine">Vaccine Center</NavLink>
+            </NavItem>
             <UncontrolledDropdown nav inNavbar>
               <DropdownToggle nav caret>
                 Options

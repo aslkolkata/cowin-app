@@ -13,6 +13,7 @@ const PinVaccineCenter = (props) => {
   const [date, setDate] = useState("");
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
+
   const handleSubmit = () => {
     if (pincode !== 0) {
       var pin = parseInt(document.getElementById("pincode").value);
