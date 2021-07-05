@@ -1,28 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { makeStyles } from "@material-ui/core/styles";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
+
 import CwTable from "./CwTable";
-import TextField from "@material-ui/core/TextField";
-import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 
-import moment from "moment";
-
-const useStyles = makeStyles((theme) => ({
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 400,
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
-  },
-}));
+import CwMatform from "./CwMatform";
+import CwMatCheckBox from "./CwMatCheckBox";
+import { Badge } from "reactstrap";
 
 function useInterval(callback, delay) {
   const savedCallback = useRef();
@@ -45,8 +28,6 @@ function useInterval(callback, delay) {
 }
 
 const GetCenterByDistrict = () => {
-  const classes = useStyles();
-
   const [all_state, setAll_state] = useState([]);
   const [state_name, setState_name] = useState("");
   const [all_district, setAll_district] = useState([]);
@@ -57,6 +38,7 @@ const GetCenterByDistrict = () => {
   const [checkedA, setCheckedA] = useState(false);
   const [checkedB, setCheckedB] = useState(false);
   const [all_center, setAll_center] = useState([]);
+  const [delay, setDelay] = useState(30000);
 
   useEffect(() => {
     axios
@@ -104,7 +86,7 @@ const GetCenterByDistrict = () => {
     setDistrict_name(
       all_district_name[Math.floor(Math.random() * all_district_name.length)]
     );
-  }, 30000);
+  }, [delay]);
 
   const getVaccineByName = (name) => {
     let vcenter = all_center.filter((x) => {
@@ -114,7 +96,9 @@ const GetCenterByDistrict = () => {
   };
 
   useEffect(() => {
-    if (checkedA === false && checkedB === true) {
+    if (checkedA === true && checkedB === true) {
+      setVaccine_session(all_center);
+    } else if (checkedA === false && checkedB === true) {
       setVaccine_session(getVaccineByName("COVISHIELD"));
     } else if (checkedA === true && checkedB === false) {
       setVaccine_session(getVaccineByName("COVAXIN"));
@@ -157,80 +141,50 @@ const GetCenterByDistrict = () => {
 
   return (
     <div>
-      <FormControl required className={classes.formControl}>
-        <InputLabel id="demo-simple-select-required-label">State</InputLabel>
-        <Select
-          labelId="demo-simple-select-required-label"
-          id="demo-simple-select-required"
-          value={state_name}
-          onChange={handleChange}
-          className={classes.selectEmpty}
-        >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          {all_state.map((stat) => {
-            return (
-              <MenuItem value={stat.state_name}>{stat.state_name}</MenuItem>
-            );
-          })}
-        </Select>
-        <FormHelperText>Required</FormHelperText>
-        <br />
-
-        <TextField
-          id="date"
-          label="Date"
-          type="date"
-          defaultValue=""
-          className={classes.textField}
-          onChange={(e) => {
-            setSelectedDate(moment(e.target.value).format("DD-MM-YYYY"));
-          }}
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
-        <br />
-        <TextField
-          disabled
-          id="standard-disabled"
-          label={district_name}
-          defaultValue=""
-        />
-      </FormControl>
-      <form className={classes.container} noValidate></form>
+      <h3>
+        <Badge color="info">STATE : </Badge>{" "}
+        <Badge color="light">{state_name}</Badge> &nbsp;&nbsp;&nbsp;&nbsp;
+        <Badge color="info">District : </Badge>{" "}
+        <Badge color="light">{district_name}</Badge> &nbsp;&nbsp;&nbsp;&nbsp;
+        <Badge color="info">Total Center : </Badge>
+        <Badge color="light">{all_center.length}</Badge>
+      </h3>
+      <br />
+      <CwMatform
+        stateName={state_name}
+        handlechange={handleChange}
+        allStates={all_state}
+        setselectedDate={(e) => {
+          setSelectedDate(e);
+        }}
+        districtName={district_name}
+      />
       <br />
       <br />
-      <FormGroup row>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={checkedA}
-              onChange={() => {
-                setCheckedA(!checkedA);
-              }}
-              name="checkedA"
-            />
-          }
-          label="COVAXIN"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={checkedB}
-              onChange={() => {
-                setCheckedB(!checkedB);
-              }}
-              name="checkedB"
-            />
-          }
-          label="COVISHEILD"
-        />
-      </FormGroup>
+      <CwMatCheckBox
+        checkeda={checkedA}
+        checkedb={checkedB}
+        setcheckedA={(e) => setCheckedA(e)}
+        setcheckedB={(e) => setCheckedB(e)}
+      />
       <CwTable vaccine_center={vaccine_session} />
     </div>
   );
 };
 
 export default GetCenterByDistrict;
+
+//TODO:
+//1. break into level 1 comp. (form, table, etc)............. done
+//2. break into level 2 components (date, dropdown)
+//3. filtering checkbox bug
+//4. search textbox ...........(assigned to S.G.)
+//5. filtering tab (all, covisheild, covaxine)
+//6. show statename and `district name properly with center count(eg. KOLKATA 100)............ done
+//7. show msg on 0 records
+//8. on state change update district immediately........ imp
+//100. material ui er table ...........(assigned to S.G.)
+
+//500. show districts as buttons.
+
+//1000. show refresh timer with start stop resume (stopwatch app)
