@@ -5,27 +5,34 @@ import CwTable from "./CwTable";
 
 import CwMatform from "./CwMatform";
 import CwMatCheckBox from "./CwMatCheckBox";
-import { Badge } from "reactstrap";
+import CwMatBadge from "./CwMatBadge";
 
-function useInterval(callback, delay) {
-  const savedCallback = useRef();
+import FormatAlignLeftIcon from "@material-ui/icons/FormatAlignLeft";
+import FormatAlignCenterIcon from "@material-ui/icons/FormatAlignCenter";
+import FormatAlignRightIcon from "@material-ui/icons/FormatAlignRight";
+import FormatAlignJustifyIcon from "@material-ui/icons/FormatAlignJustify";
+import ToggleButton from "@material-ui/lab/ToggleButton";
+import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
+// function useInterval(callback, delay) {
+//   const savedCallback = useRef();
 
-  // Set up the interval.
-  useEffect(() => {
-    function tick() {
-      savedCallback.current();
-    }
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-}
+//   // Remember the latest callback.
+//   useEffect(() => {
+//     savedCallback.current = callback;
+//   }, [callback]);
+
+//   // Set up the interval.
+//   useEffect(() => {
+//     function tick() {
+//       savedCallback.current();
+//     }
+//     if (delay !== null) {
+//       let id = setInterval(tick, delay);
+//       return () => clearInterval(id);
+//     }
+//   }, [delay]);
+// }
 
 const GetCenterByDistrict = () => {
   const [all_state, setAll_state] = useState([]);
@@ -39,6 +46,24 @@ const GetCenterByDistrict = () => {
   const [checkedB, setCheckedB] = useState(false);
   const [all_center, setAll_center] = useState([]);
   const [delay, setDelay] = useState(30000);
+  const [time, setTime] = React.useState(0);
+  const [timerOn, setTimerOn] = React.useState(false);
+  // const [district_length, setDistrict_length] = useState(0);
+  // const [dButton, setDButton] = useState("");
+
+  useEffect(() => {
+    let interval = null;
+
+    if (timerOn) {
+      interval = setInterval(() => {
+        setTime((prevTime) => prevTime + 10);
+      }, 10);
+    } else if (!timerOn) {
+      clearInterval(interval);
+    }
+
+    return () => clearInterval(interval);
+  }, [timerOn]);
 
   useEffect(() => {
     axios
@@ -82,11 +107,23 @@ const GetCenterByDistrict = () => {
     setState_name(event.target.value);
   };
 
-  useInterval(() => {
+  useEffect(() => {
     setDistrict_name(
       all_district_name[Math.floor(Math.random() * all_district_name.length)]
     );
-  }, [delay]);
+    let id = setInterval(() => {
+      setDistrict_name(
+        all_district_name[Math.floor(Math.random() * all_district_name.length)]
+      );
+    }, 10000);
+    return () => clearInterval(id);
+  }, [all_district_name]);
+
+  // useInterval(() => {
+  // setDistrict_name(
+  //   all_district_name[Math.floor(Math.random() * all_district_name.length)]
+  // );
+  // }, [delay]);
 
   const getVaccineByName = (name) => {
     let vcenter = all_center.filter((x) => {
@@ -141,14 +178,11 @@ const GetCenterByDistrict = () => {
 
   return (
     <div>
-      <h3>
-        <Badge color="info">STATE : </Badge>{" "}
-        <Badge color="light">{state_name}</Badge> &nbsp;&nbsp;&nbsp;&nbsp;
-        <Badge color="info">District : </Badge>{" "}
-        <Badge color="light">{district_name}</Badge> &nbsp;&nbsp;&nbsp;&nbsp;
-        <Badge color="info">Total Center : </Badge>
-        <Badge color="light">{all_center.length}</Badge>
-      </h3>
+      <CwMatBadge
+        stateName={state_name}
+        districtName={district_name}
+        centerCount={all_center.length}
+      />
       <br />
       <CwMatform
         stateName={state_name}
@@ -161,6 +195,41 @@ const GetCenterByDistrict = () => {
       />
       <br />
       <br />
+      {/* <ToggleButtonGroup
+        value={dButton}
+        exclusive
+        onChange={(e, nA) => {
+          setDButton(nA);
+        }}
+        aria-label="districts"
+      >
+        {all_district_name.map((d) => {
+          return (
+            <ToggleButton value={d} aria-label={d}>
+              {d}
+            </ToggleButton>
+          );
+        })}
+      </ToggleButtonGroup>
+      <br /> */}
+      <h2>Stopwatch</h2>
+      <div id="display">
+        <span>{("0" + Math.floor((time / 60000) % 60)).slice(-2)}:</span>
+        <span>{("0" + Math.floor((time / 1000) % 60)).slice(-2)}:</span>
+        <span>{("0" + ((time / 10) % 100)).slice(-2)}</span>
+      </div>
+      <div id="buttons">
+        {!timerOn && time === 0 && (
+          <button onClick={() => setTimerOn(true)}>Start</button>
+        )}
+        {timerOn && <button onClick={() => setTimerOn(false)}>Stop</button>}
+        {!timerOn && time > 0 && (
+          <button onClick={() => setTime(0)}>Reset</button>
+        )}
+        {!timerOn && time > 0 && (
+          <button onClick={() => setTimerOn(true)}>Resume</button>
+        )}
+      </div>
       <CwMatCheckBox
         checkeda={checkedA}
         checkedb={checkedB}
@@ -182,8 +251,9 @@ export default GetCenterByDistrict;
 //5. filtering tab (all, covisheild, covaxine)
 //6. show statename and `district name properly with center count(eg. KOLKATA 100)............ done
 //7. show msg on 0 records
-//8. on state change update district immediately........ imp
+//8. on state change update district immediately........ imp................. done
 //100. material ui er table ...........(assigned to S.G.)
+//200. "Book" button in table ....on click popup with form!
 
 //500. show districts as buttons.
 

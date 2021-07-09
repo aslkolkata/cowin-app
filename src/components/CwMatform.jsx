@@ -56,13 +56,6 @@ const CwMatform = (props) => {
             shrink: true,
           }}
         />
-        <br />
-        <TextField
-          disabled
-          id="standard-disabled"
-          label={props.districtName}
-          defaultValue=""
-        />
       </FormControl>
     </div>
   );
