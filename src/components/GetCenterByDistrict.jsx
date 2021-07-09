@@ -45,11 +45,8 @@ const GetCenterByDistrict = () => {
   const [checkedA, setCheckedA] = useState(false);
   const [checkedB, setCheckedB] = useState(false);
   const [all_center, setAll_center] = useState([]);
-  const [delay, setDelay] = useState(30000);
   const [time, setTime] = React.useState(0);
   const [timerOn, setTimerOn] = React.useState(false);
-  // const [district_length, setDistrict_length] = useState(0);
-  // const [dButton, setDButton] = useState("");
 
   useEffect(() => {
     let interval = null;
@@ -89,6 +86,8 @@ const GetCenterByDistrict = () => {
           state_id["state_id"],
       })
         .then((response) => {
+          setTimerOn(true);
+          setTime(0);
           console.log(response.data.districts);
           setAll_district(response.data.districts);
           setAll_district_name(
@@ -108,22 +107,27 @@ const GetCenterByDistrict = () => {
   };
 
   useEffect(() => {
+    let dist_interval_id;
+    if (timerOn) {
+      dist_interval_id = setInterval(() => {
+        setDistrict_name(
+          all_district_name[
+            Math.floor(Math.random() * all_district_name.length)
+          ]
+        );
+        setTime(0);
+      }, 10000);
+    } else if (!timerOn) {
+      clearInterval(dist_interval_id);
+    }
+    return () => clearInterval(dist_interval_id);
+  }, [all_district_name, timerOn]);
+
+  useEffect(() => {
     setDistrict_name(
       all_district_name[Math.floor(Math.random() * all_district_name.length)]
     );
-    let id = setInterval(() => {
-      setDistrict_name(
-        all_district_name[Math.floor(Math.random() * all_district_name.length)]
-      );
-    }, 10000);
-    return () => clearInterval(id);
   }, [all_district_name]);
-
-  // useInterval(() => {
-  // setDistrict_name(
-  //   all_district_name[Math.floor(Math.random() * all_district_name.length)]
-  // );
-  // }, [delay]);
 
   const getVaccineByName = (name) => {
     let vcenter = all_center.filter((x) => {
@@ -182,6 +186,9 @@ const GetCenterByDistrict = () => {
         stateName={state_name}
         districtName={district_name}
         centerCount={all_center.length}
+        Time={time}
+        timeron={timerOn}
+        setTimeron={(e) => setTimerOn(e)}
       />
       <br />
       <CwMatform
@@ -212,24 +219,6 @@ const GetCenterByDistrict = () => {
         })}
       </ToggleButtonGroup>
       <br /> */}
-      <h2>Stopwatch</h2>
-      <div id="display">
-        <span>{("0" + Math.floor((time / 60000) % 60)).slice(-2)}:</span>
-        <span>{("0" + Math.floor((time / 1000) % 60)).slice(-2)}:</span>
-        <span>{("0" + ((time / 10) % 100)).slice(-2)}</span>
-      </div>
-      <div id="buttons">
-        {!timerOn && time === 0 && (
-          <button onClick={() => setTimerOn(true)}>Start</button>
-        )}
-        {timerOn && <button onClick={() => setTimerOn(false)}>Stop</button>}
-        {!timerOn && time > 0 && (
-          <button onClick={() => setTime(0)}>Reset</button>
-        )}
-        {!timerOn && time > 0 && (
-          <button onClick={() => setTimerOn(true)}>Resume</button>
-        )}
-      </div>
       <CwMatCheckBox
         checkeda={checkedA}
         checkedb={checkedB}
@@ -257,4 +246,5 @@ export default GetCenterByDistrict;
 
 //500. show districts as buttons.
 
-//1000. show refresh timer with start stop resume (stopwatch app)
+//1000. show refresh timer with start stop resume (stopwatch app)................ done
+//1001. stopwatch resume bug
