@@ -5,10 +5,12 @@ import CwPinForm from "./CwPinForm";
 import CwTable from "./CwTable";
 import CwModal from "./CwModal";
 import CwAlert from "./CwAlert";
+import CwSearchField from "./CwSearchField";
 
 const PinVaccineCenter = (props) => {
   const [pincode, setPincode] = useState(0);
   const [session, setSession] = useState([]);
+  const [fltSsnList, setFltSsnList] = useState([]);
   const [show, setShow] = useState(false);
   const [date, setDate] = useState("");
   const [modal, setModal] = useState(false);
@@ -27,6 +29,7 @@ const PinVaccineCenter = (props) => {
         .then((resp) => {
           console.log(resp.data);
           setSession(resp.data.sessions);
+          setFltSsnList(resp.data.sessions);
         })
         .catch((error) => {
           console.log(error);
@@ -73,8 +76,16 @@ const PinVaccineCenter = (props) => {
         handleToggle={toggle}
       />
       <br />
+      <CwSearchField
+        placeholder="Search by name"
+        onChange={(value) =>
+          setFltSsnList(
+            session.filter(({ name }) => name.toLowerCase().includes(value))
+          )
+        }
+      />
       <br />
-      <CwTable vaccine_center={session} />
+      <CwTable vaccine_center={fltSsnList} />
     </div>
   );
 };
