@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import axios from "axios";
 import CwPinForm from "./CwPinForm";
-import CwTable from "./CwTable";
+import CwMatTable from "./CwMatTable";
 import CwModal from "./CwModal";
 import CwAlert from "./CwAlert";
 import CwSearchField from "./CwSearchField";
@@ -38,6 +38,65 @@ const PinVaccineCenter = (props) => {
     }
     // event.preventDefault();
   };
+
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "Center",
+        columns: [
+          {
+            Header: "Id",
+            accessor: "center_id",
+          },
+          {
+            Header: "Name",
+            accessor: "name",
+          },
+          {
+            Header: "Address",
+            accessor: "address",
+          },
+          {
+            Header: "From",
+            accessor: "from",
+          },
+          {
+            Header: "To",
+            accessor: "to",
+          },
+        ],
+      },
+      {
+        Header: "Vaccine",
+        columns: [
+          {
+            Header: "Fee Type",
+            accessor: "fee_type",
+          },
+          {
+            Header: "Fee",
+            accessor: "fee",
+          },
+          {
+            Header: "Dose 1",
+            accessor: "available_capacity_dose1",
+          },
+          {
+            Header: "Dose 2",
+            accessor: "available_capacity_dose2",
+          },
+          {
+            Header: "Vaccine",
+            accessor: "vaccine",
+          },
+        ],
+      },
+    ],
+    []
+  );
+
+  const data = React.useMemo(() => fltSsnList, [fltSsnList]);
+
   return (
     <div>
       <div>
@@ -85,7 +144,7 @@ const PinVaccineCenter = (props) => {
         }
       />
       <br />
-      <CwTable vaccine_center={fltSsnList} />
+      <CwMatTable columns={columns} data={data} />
     </div>
   );
 };
